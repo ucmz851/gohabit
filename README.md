@@ -68,7 +68,7 @@ This file allows you to customize the following settings:
 ### Option 1: Native Go Installer (Recommended)
 You can install `gohabit` directly into your `$GOBIN` path using Go's package manager:
 ```bash
-go install github.com/YOUR_GITHUB_USERNAME/gohabit@latest
+go install github.com/ucmz851/gohabit@latest
 ```
 Once installed, you can launch the TUI from anywhere in your shell:
 ```bash
@@ -79,7 +79,7 @@ gohabit
 Clone the repository and install the utility globally for your user using the provided `Makefile`:
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_GITHUB_USERNAME/gohabit.git
+git clone https://github.com/ucmz851/gohabit.git
 cd gohabit
 
 # Build & install (copies the gohabit binary to ~/.local/bin)
