@@ -1,5 +1,5 @@
 <div align="left">
-  <img src="Logo.png" alt="Gohabit Logo" width="200" />
+  <img src="Logo.png" alt="Gohabit Logo" style="width:100%; max-width:500px;" />
 </div>
 
 # Gohabit
