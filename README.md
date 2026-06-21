@@ -59,23 +59,40 @@ This file allows you to customize the following settings:
 
 ---
 
-## 🚀 How to Run
+## 🚀 Installation & Running
 
 ### Prerequisites
 - Go (version 1.18 or higher) installed on your system.
+- Your local `$GOBIN` (e.g. `~/go/bin`) or `~/.local/bin` added to your system's `$PATH` environment variable.
 
-### Option 1: Quick Run
-You can run the application directly using:
+### Option 1: Native Go Installer (Recommended)
+You can install `gohabit` directly into your `$GOBIN` path using Go's package manager:
 ```bash
-go run .
+go install github.com/YOUR_GITHUB_USERNAME/gohabit@latest
+```
+Once installed, you can launch the TUI from anywhere in your shell:
+```bash
+gohabit
 ```
 
-### Option 2: Build and Run Executable
-Compile the binary first:
+### Option 2: Build & Install via Makefile
+Clone the repository and install the utility globally for your user using the provided `Makefile`:
 ```bash
+# Clone the repository
+git clone https://github.com/YOUR_GITHUB_USERNAME/gohabit.git
+cd gohabit
+
+# Build & install (copies the gohabit binary to ~/.local/bin)
+make install
+```
+After executing, you can launch `gohabit` from your terminal.
+
+### Option 3: Manual Compilation
+If you prefer to compile and run the binary locally:
+```bash
+# Build the binary
 go build -o gohabit
-```
-Then run the compiled binary:
-```bash
+
+# Run the binary locally
 ./gohabit
 ```
