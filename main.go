@@ -286,7 +286,7 @@ func (m model) View() string {
 	}
 
 	// Header banner
-	header := headerStyle.Render("  HABIT TRACKER TUI  ")
+	header := headerStyle.Render("  GOBIT  ")
 
 	// Summary Stats for Today
 	var completedToday, totalHabits int

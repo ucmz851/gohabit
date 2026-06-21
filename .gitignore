@@ -1,6 +1,5 @@
 # Compiled binaries
-habit-tracker-tui
-habit-tracker
+gobit
 *.exe
 *.exe~
 *.dll

@@ -1,4 +1,4 @@
-# ⚡ Habit Tracker TUI
+# ⚡ Gobit
 
 A beautiful, sleek, and highly functional Terminal User Interface (TUI) for tracking daily habits, built using **Go**, **Bubble Tea**, and **Lipgloss**.
 
@@ -73,9 +73,9 @@ go run .
 ### Option 2: Build and Run Executable
 Compile the binary first:
 ```bash
-go build -o habit-tracker
+go build -o gobit
 ```
 Then run the compiled binary:
 ```bash
-./habit-tracker
+./gobit
 ```
