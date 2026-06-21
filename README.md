@@ -46,6 +46,37 @@ It features a clean split-panel design showing your habits, progress sparklines,
 
 
 
+## 💻 Command Line Interface (CLI) Mode
+
+Gohabit can be run directly from your terminal using command-line arguments to perform quick checks or add new habits. This allows easy integration with aliases, cron jobs, or shell scripts.
+
+### List tracked habits
+Display a clean table of all habits, their completion status for today, and current streaks:
+```bash
+gohabit list
+```
+
+### Check/toggle today's completion
+Toggle today's check-in status for a habit. The matching supports case-insensitive substrings (e.g. `gohabit check water` will toggle `Drink Water`):
+```bash
+gohabit check "<habit-name>"
+```
+
+### Add a new habit
+Create a new habit with an optional description directly:
+```bash
+gohabit add "<habit-name>" ["<optional-description>"]
+```
+
+### Display help or version
+Show the command reference table or check the installed release:
+```bash
+gohabit -h         # or gohabit --help
+gohabit -v         # or gohabit --version
+```
+
+---
+
 ## ⚙️ Manual Configuration (`config.ini`)
 
 Upon its first execution, the application automatically generates a template `config.ini` configuration file in the current directory if one does not already exist.

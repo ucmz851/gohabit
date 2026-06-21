@@ -53,7 +53,7 @@ else
     
     if [ -z "$LATEST_RELEASE" ]; then
         # Fallback if API fails
-        LATEST_RELEASE="v1.0.0"
+        LATEST_RELEASE="v0.0.1"
     fi
     
     echo "Latest release is $LATEST_RELEASE"

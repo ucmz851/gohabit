@@ -8,6 +8,8 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"flag"
+
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -654,16 +656,159 @@ func renderCalendar(h *Habit, weekStart int) string {
 	return sb.String()
 }
 
+const version = "0.0.1"
+
+func printHelp() {
+	fmt.Println(`Gohabit - A clean retro terminal habit tracker
+
+Usage:
+  gohabit                       Launch the interactive TUI dashboard
+  gohabit <command> [args]      Run in CLI mode to perform quick actions
+
+Commands:
+  add "<name>" ["<desc>"]       Add a new habit with optional description
+  check "<name>"                Toggle today's completion for a habit
+  list                          List all habits, streaks, and today's status
+  help                          Show this help documentation
+
+Flags:
+  -v, --version                 Print version information and exit
+  -h, --help                    Print this help menu and exit
+
+Configuration:
+  Settings are loaded from 'config.ini' in the current directory.
+  Completions are saved to the database specified in 'config.ini'.`)
+}
+
+func handleCLI(db *Database, args []string) {
+	subcommand := strings.ToLower(args[0])
+
+	switch subcommand {
+	case "help":
+		printHelp()
+
+	case "add":
+		if len(args) < 2 {
+			fmt.Println("Error: Missing habit name.\nUsage: gohabit add \"<name>\" [\"<description>\"]")
+			os.Exit(1)
+		}
+		name := args[1]
+		desc := ""
+		if len(args) >= 3 {
+			desc = args[2]
+		}
+
+		id := fmt.Sprintf("%d", time.Now().UnixNano())
+		h := &Habit{
+			ID:          id,
+			Name:        name,
+			Description: desc,
+			CreatedAt:   time.Now(),
+		}
+
+		err := db.AddHabit(h)
+		if err != nil {
+			fmt.Printf("Error adding habit: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Habit '%s' added successfully.\n", name)
+
+	case "check":
+		if len(args) < 2 {
+			fmt.Println("Error: Missing habit name.\nUsage: gohabit check \"<name>\"")
+			os.Exit(1)
+		}
+		nameQuery := args[1]
+		habits, err := db.LoadHabits()
+		if err != nil {
+			fmt.Printf("Error loading habits: %v\n", err)
+			os.Exit(1)
+		}
+
+		var target *Habit
+		for _, h := range habits {
+			if strings.EqualFold(h.Name, nameQuery) || strings.Contains(strings.ToLower(h.Name), strings.ToLower(nameQuery)) {
+				target = h
+				break
+			}
+		}
+
+		if target == nil {
+			fmt.Printf("Error: No habit found matching '%s'.\n", nameQuery)
+			os.Exit(1)
+		}
+
+		todayStr := time.Now().Format("2006-01-02")
+		newStatus := !target.History[todayStr]
+
+		err = db.SaveToggle(target.ID, todayStr, newStatus)
+		if err != nil {
+			fmt.Printf("Error saving toggle: %v\n", err)
+			os.Exit(1)
+		}
+
+		if newStatus {
+			fmt.Printf("Marked habit '%s' as COMPLETED for today!\n", target.Name)
+		} else {
+			fmt.Printf("Marked habit '%s' as PENDING for today.\n", target.Name)
+		}
+
+	case "list":
+		habits, err := db.LoadHabits()
+		if err != nil {
+			fmt.Printf("Error loading habits: %v\n", err)
+			os.Exit(1)
+		}
+
+		if len(habits) == 0 {
+			fmt.Println("No habits tracked yet. Run 'gohabit add \"<name>\"' to add one.")
+			return
+		}
+
+		fmt.Printf("%-25s %-15s %-15s\n", "Habit Name", "Today's Status", "Streak")
+		fmt.Println(strings.Repeat("-", 60))
+
+		todayStr := time.Now().Format("2006-01-02")
+		for _, h := range habits {
+			status := "[ ] Pending"
+			if h.History[todayStr] {
+				status = "[X] Completed"
+			}
+			currStreak, _ := h.GetStreaks()
+			streakStr := fmt.Sprintf("%d days", currStreak)
+			if currStreak == 0 {
+				streakStr = "0 days"
+			}
+			fmt.Printf("%-25s %-15s %-15s\n", h.Name, status, streakStr)
+		}
+
+	default:
+		fmt.Printf("Error: Unknown command '%s'\n\n", args[0])
+		printHelp()
+		os.Exit(1)
+	}
+}
+
 func main() {
+	// Set custom usage
+	flag.Usage = printHelp
+
+	// Parse version flags
+	versionFlag := flag.Bool("v", false, "print version and exit")
+	flag.BoolVar(versionFlag, "version", false, "print version and exit")
+	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("gohabit version %s\n", version)
+		return
+	}
+
 	// Load configuration
 	cfg, err := LoadConfig("config.ini")
 	if err != nil {
 		fmt.Printf("Error loading config: %v\n", err)
 		os.Exit(1)
 	}
-
-	// Initialize styles based on config theme colors
-	InitStyles(cfg)
 
 	// Initialize database from config database path
 	db, err := NewDatabase(cfg.DBPath)
@@ -672,6 +817,16 @@ func main() {
 		os.Exit(1)
 	}
 	defer db.Close()
+
+	// Check if there are CLI arguments
+	args := flag.Args()
+	if len(args) > 0 {
+		handleCLI(db, args)
+		return
+	}
+
+	// Initialize styles based on config theme colors
+	InitStyles(cfg)
 
 	p := tea.NewProgram(initialModel(db, cfg), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
