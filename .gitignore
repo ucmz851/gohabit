@@ -1,0 +1,25 @@
+# Compiled binaries
+habit-tracker-tui
+habit-tracker
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# SQLite database files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Local user configurations
+config.ini
+
+# IDE settings and OS files
+.idea/
+.vscode/
+*.suo
+*.sln
+*.sw?
+.DS_Store
