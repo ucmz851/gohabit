@@ -1,5 +1,5 @@
 <div align="left">
-  <h1>⚡ Gohabit</h1>
+  <img src="Logo.png" alt="Gohabit Logo" width="200" />
 </div>
 
 # Gohabit

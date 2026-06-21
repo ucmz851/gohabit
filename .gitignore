@@ -1,5 +1,6 @@
 # Compiled binaries
 gohabit
+dist/
 *.exe
 *.exe~
 *.dll
