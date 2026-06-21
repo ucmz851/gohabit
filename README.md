@@ -65,8 +65,19 @@ This file allows you to customize the following settings:
 - Go (version 1.18 or higher) installed on your system.
 - Your local `$GOBIN` (e.g. `~/go/bin`) or `~/.local/bin` added to your system's `$PATH` environment variable.
 
-### Option 1: Native Go Installer (Recommended)
-You can install `gohabit` directly into your `$GOBIN` path using Go's package manager:
+### Option 1: Quick One-Line Installer (Recommended)
+You can download and configure `gohabit` automatically by running the following command in your terminal. 
+
+This script checks for Go on your system to build from source, otherwise it auto-downloads the pre-compiled binary matching your OS/architecture from the latest GitHub Release and updates your shell profile path settings:
+
+```bash
+curl -sSfL https://raw.githubusercontent.com/ucmz851/gohabit/main/get-gohabit.sh | sh
+```
+
+---
+
+### Option 2: Native Go Installer
+If you are a Go developer, you can install `gohabit` directly into your `$GOBIN` path using Go's package manager:
 ```bash
 go install github.com/ucmz851/gohabit@latest
 ```
@@ -75,7 +86,7 @@ Once installed, you can launch the TUI from anywhere in your shell:
 gohabit
 ```
 
-### Option 2: Build & Install via Makefile
+### Option 3: Build & Install via Makefile
 Clone the repository and run the installation script using `make`. This automatically:
 1. Compiles the `gohabit` binary locally.
 2. Creates the target directory `~/.local/bin` if it does not exist.
@@ -92,7 +103,7 @@ make install
 ```
 After executing, restart your terminal or source your profile to start using `gohabit` globally.
 
-### Option 3: Manual Compilation
+### Option 4: Manual Compilation
 If you prefer to compile and run the binary locally:
 ```bash
 # Build the binary
