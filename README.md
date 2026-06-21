@@ -1,124 +1,181 @@
-# 🌟 Gohabit
+<div align="left">
+  <h1>⚡ Gohabit</h1>
+</div>
+
+# Gohabit
+[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://golang.org/dl/)
+[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS-lightgrey)](https://github.com/ucmz851/gohabit)
+
+[![Release](https://img.shields.io/github/v/release/ucmz851/gohabit)](https://github.com/ucmz851/gohabit/releases)
+[![Downloads](https://img.shields.io/github/downloads/ucmz851/gohabit/total)](https://github.com/ucmz851/gohabit/releases)
+[![Stars](https://img.shields.io/github/stars/ucmz851/gohabit)](https://github.com/ucmz851/gohabit/stargazers)
 
 A beautiful, sleek, and gamified Terminal User Interface (TUI) for tracking daily habits, built with **Go**, **Bubble Tea**, and **Lipgloss**.
 
-Level up your life, earn XP, maintain streaks, and build consistent habits inside your favorite shell!
+---
 
-## 📸 Screenshots
+## Table of Contents
 
-| Welcome Screen | Main Dashboard | Hourly Time-Blocking |
-| :---: | :---: | :---: |
-| ![Welcome Screen](screenshot-2026-06-21_19-39-55.png) | ![Main Dashboard](screenshot-2026-06-21_19-41-27.png) | ![Time-Blocking](screenshot-2026-06-21_19-41-49.png) |
+- [Overview](#overview)
+- [Features](#features)
+- [Who is this Project for?](#who-is-this-project-for)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+  - [Quick Install](#quick-install-recommended)
+  - [Native Go install](#native-go-install)
+  - [Makefile installation](#makefile-installation)
+- [Usage](#usage)
+  - [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Configuration](#configuration)
+  - [Configuration Options](#configuration-options)
+- [License](#license)
+- [Contributing](#contributing)
 
 ---
 
-## ✨ Features
+## Overview
 
-* 🎮 **RPG-style Gamification**:
-  * **Level & XP Engine**: Earn +10 XP for completing habits, plus daily streak bonus XP.
-  * **XP Progress Bar**: A visual indicator right in the app header: `⭐ Level 3 [██████░░░░░░] 40/100 XP`.
-  * **Level Up Celebrations**: In-app animations and desktop notifications celebrate your growth!
-* 🧼 **Friendly Clean Slate**: Fresh installations greet you with a gorgeous centered Welcome Card, encouraging you to jump right into habit creation.
-* 🎨 **Vibrant Modern Aesthetics**:
-  * Styled with a premium dark theme: **Indigo Purple** borders, **Golden** streaks, and **Emerald Green** checkmarks.
-  * Sleek rounded panels replace blocky retro borders.
-  * GitHub-style calendar grids (`■`/`□`/`·`) show your monthly habit achievements.
-* 📅 **Interactive Retroactive Checks**: Highlight days on the 7-day sparkline history using `←`/`→` keys and retroactively toggle completions.
-* ⏰ **Collapsible Hourly Time-Blocking**: Organize your day into time slots. The timeline stays collapsed until you decide to plan.
-* 🐚 **Git Repo Integration**: Link habits to local git repos. The background worker checks commits and auto-completes habits when you commit code (with loop protection so you can still override it).
-* 💾 **Reliable SQLite Storage**: Your logs are saved in a local SQLite file (`habits.db`), now protected with Write-Ahead Logging (WAL) and busy timeout retries to prevent locking.
+Gohabit is an interactive CLI habit tracker designed to help you build consistency. It parses and monitors your local git repositories to auto-complete programming habits and gamifies your daily routines with levels and XP.
 
----
+**Screenshots**
 
-## ⌨️ Controls & Keybindings
-
-### Main View
-* `↑` / `↓` or `k` / `j` : Navigate and select habits
-* `←` / `→` or `h` / `l` : Navigate between days on the 7-day sparkline (indicated by `[●]`)
-* `Space` : Toggle completion for the highlighted day or selected habit
-* `t` : Toggle/open hourly time-blocking timeline
-* `n` : Create a new habit
-* `e` : Edit the selected habit name, description, priority, or Git repo
-* `d` / `x` : Delete the selected habit
-* `q` / `Ctrl+C` : Quit the application
-
-### Form Input (Add / Edit Habit)
-* `Tab` / `Shift+Tab` or `↓` / `↑` : Move focus between fields (Name, Description, Git Path, Priority, Save/Cancel buttons)
-* `Space` / `Enter` : Toggle Priority checkbox or trigger button action
-* `Esc` : Cancel form and return to the main dashboard
+<p align="left">
+  <img src="screenshot-2026-06-21_19-39-55.png" alt="Welcome Screen" style="width:100%;max-width:900px;min-width:300px;" />
+  <br><em>welcome screen (clean slate first use)</em>
+  <br><br>
+  <img src="screenshot-2026-06-21_19-41-27.png" alt="Main Dashboard" style="width:100%;max-width:900px;min-width:300px;" />
+  <br><em>main dashboard showing levels, habit progress, stats grid, and calendar heatmap</em>
+  <br><br>
+  <img src="screenshot-2026-06-21_19-41-49.png" alt="Hourly Time-Blocking" style="width:100%;max-width:900px;min-width:300px;" />
+  <br><em>hourly time-blocking timeline</em>
+</p>
 
 ---
 
-## 💻 Command Line Interface (CLI) Mode
+## Features
 
-Gohabit supports quick shell commands for scripting, aliases, or cron jobs.
-
-### List tracked habits
-```bash
-gohabit list
-```
-
-### Toggle completion for today
-```bash
-gohabit check "Drink Water"
-```
-
-### Add a new habit
-```bash
-gohabit add "Workout" "Go to the gym for 45 minutes"
-```
-
-### Display help or version
-```bash
-gohabit --help
-gohabit --version
-```
+- **🎮 Gamified Progression**: Earn XP (+10 XP per completion, +5 XP per active streak day), level up, and celebrate milestones with system notifications and in-app celebratory headers.
+- **🎨 Premium Modern Styling**: Styled with a dark palette (Indigo headers, Gold streaks, Emerald checks) and clean rounded border panels.
+- **📅 GitHub-style Calendar Grid**: Monthly contribution heatmaps (`■`, `□`, `·`) to track historical completions at a glance.
+- **⏰ Collapsible Hourly Time-Blocking**: Plan out your day in hour slots. The timeline collapses out of sight when not active.
+- **🐚 Git repo integration**: Link programming habits to local git repos. The background worker auto-detects commits since midnight and completes the habit.
+- **💾 WAL SQLite Backend**: Robust SQLite database integration using WAL (Write-Ahead Logging) and busy timeouts to prevent concurrency locks.
+- **📱 Responsive Layout**: Automatically scales and stacks panels vertically on thin windows (width < 96).
 
 ---
 
-## ⚙️ Customization (`config.ini`)
-
-Gohabit generates a template configuration file (`config.ini`) on first run:
-
-```ini
-# Path to the SQLite database file
-db_path = habits.db
-
-# Theme Colors (Hex codes)
-color_header_bg = #7C3AED   # Indigo
-color_accent = #F59E0B      # Gold
-color_success = #10B981     # Emerald
-
-# Calendar start day (0 = Sunday, 1 = Monday)
-week_start = 1
-
-# Evening notification trigger hour (0-23)
-evening_hour = 18
-```
+## Who is this Project for?
+- Developers and terminal lovers who want to keep track of their habits inside their workflow.
+- Programmers looking for a CLI tool that automatically monitors local git repository activities to track coding habits.
+- Anyone looking to gamify their daily routines with a level-based reward TUI client.
 
 ---
 
-## 🚀 Installation & Running
+## Prerequisites
 
-### Prerequisites
-* Go (version 1.18 or higher) installed on your system.
-* Your local `$GOBIN` (e.g. `~/go/bin`) or `~/.local/bin` added to your system's `$PATH`.
+- **Go 1.26+** (only required if compiling from source)
+- **Git** (only required if using the Git repository commit tracking feature)
 
-### Option 1: One-Line Script Installer (Recommended)
-Automatically builds from source if Go is present, otherwise downloads the pre-compiled binary for your architecture and updates your shell profile:
+---
+
+## Installation
+
+### Quick Install (Recommended)
+Downloads the latest pre-compiled binary matching your OS/architecture or builds from source:
 ```bash
 curl -sSfL https://raw.githubusercontent.com/ucmz851/gohabit/main/get-gohabit.sh | sh
 ```
 
-### Option 2: Go Installer
-Installs directly into your `$GOBIN`:
+### Native Go install
+If you have Go installed on your path:
 ```bash
 go install github.com/ucmz851/gohabit@latest
 ```
 
-### Option 3: Build via Makefile
+### Makefile installation
+Build from source and copy the binary to `~/.local/bin` automatically:
 ```bash
 git clone https://github.com/ucmz851/gohabit.git
 cd gohabit
 make install
 ```
+
+---
+
+## Usage
+
+Start the interactive dashboard:
+```bash
+gohabit
+```
+
+Gohabit also supports quick CLI inputs to list, check, or add habits directly:
+```bash
+gohabit list
+gohabit check "Drink Water"
+gohabit add "Workout" "Go to the gym for 45 minutes"
+```
+
+### Keyboard Shortcuts
+
+| Shortcut | Description |
+|---|---|
+| `↑` / `↓` or `k` / `j` | Select/move between habits |
+| `←` / `→` or `h` / `l` | Navigate highlighted day on the 7-day sparkline history |
+| `Space` | Toggle completion status for the highlighted day or selected habit |
+| `t` | Toggle/open hourly time-blocking timeline |
+| `n` | Create a new habit |
+| `e` | Edit the selected habit |
+| `d` / `x` | Delete the selected habit |
+| `q` / `Ctrl+C` | Quit the application |
+
+---
+
+## Configuration
+
+Gohabit generates a default config file at `config.ini` in the working directory on its first run.
+
+```ini
+db_path = habits.db
+color_header_bg = #7C3AED
+color_accent = #F59E0B
+color_success = #10B981
+week_start = 1
+evening_hour = 18
+```
+
+### Configuration Options
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `db_path` | string | "habits.db" | Path to SQLite database file. |
+| `color_header_bg` | string | "#7C3AED" | Hex color code for the top header background. |
+| `color_accent` | string | "#F59E0B" | Hex color code for panel borders and highlights. |
+| `color_success` | string | "#10B981" | Hex color code for completed checkboxes/days. |
+| `week_start` | int | 1 | Week start day for the calendar (0 = Sunday, 1 = Monday). |
+| `evening_hour` | int | 18 | Evening hour to trigger priority habit reminders (0-23). |
+
+---
+
+## Star History
+
+<a href="https://www.star-history.com/#ucmz851/gohabit&Timeline">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ucmz851/gohabit&type=Timeline&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ucmz851/gohabit&type=Timeline" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=ucmz851/gohabit&type=Timeline" />
+ </picture>
+</a>
+
+---
+
+## License
+
+Gohabit is licensed under the [MIT License](LICENSE).
+
+---
+
+## Contributing
+
+PRs and issues are welcome! See the guidelines in the repository.
