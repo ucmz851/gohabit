@@ -9,11 +9,14 @@ import (
 )
 
 type Habit struct {
-	ID          string          `json:"id"`
-	Name        string          `json:"name"`
-	Description string          `json:"description"`
-	CreatedAt   time.Time       `json:"created_at"`
-	History     map[string]bool `json:"history"` // date string "YYYY-MM-DD" -> completed
+	ID          string                  `json:"id"`
+	Name        string                  `json:"name"`
+	Description string                  `json:"description"`
+	GitDir      string                  `json:"git_dir"`
+	IsPriority  bool                    `json:"is_priority"`
+	CreatedAt   time.Time               `json:"created_at"`
+	History     map[string]bool         `json:"history"`     // date string "YYYY-MM-DD" -> completed
+	TimeBlocks  map[string]map[int]bool `json:"time_blocks"` // date -> hour -> focused
 }
 
 // GetStreaks calculates the current streak and the longest streak.
@@ -166,7 +169,9 @@ func NewDatabase(dbPath string) (*Database, error) {
 		id TEXT PRIMARY KEY,
 		name TEXT NOT NULL,
 		description TEXT,
-		created_at TEXT NOT NULL
+		created_at TEXT NOT NULL,
+		git_dir TEXT,
+		is_priority INTEGER DEFAULT 0
 	);
 
 	CREATE TABLE IF NOT EXISTS history (
@@ -176,11 +181,23 @@ func NewDatabase(dbPath string) (*Database, error) {
 		PRIMARY KEY (habit_id, date),
 		FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
 	);
+
+	CREATE TABLE IF NOT EXISTS time_blocks (
+		habit_id TEXT,
+		date TEXT, -- YYYY-MM-DD
+		hour INTEGER, -- 0-23
+		PRIMARY KEY (habit_id, date, hour),
+		FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
+	);
 	`
 	if _, err := db.Exec(schema); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
+
+	// Run migration for existing databases to add git_dir and is_priority columns
+	_, _ = db.Exec("ALTER TABLE habits ADD COLUMN git_dir TEXT")
+	_, _ = db.Exec("ALTER TABLE habits ADD COLUMN is_priority INTEGER DEFAULT 0")
 
 	return &Database{db: db}, nil
 }
@@ -190,7 +207,7 @@ func (d *Database) Close() error {
 }
 
 func (d *Database) LoadHabits() ([]*Habit, error) {
-	rows, err := d.db.Query("SELECT id, name, description, created_at FROM habits ORDER BY created_at ASC")
+	rows, err := d.db.Query("SELECT id, name, description, created_at, git_dir, is_priority FROM habits ORDER BY created_at ASC")
 	if err != nil {
 		return nil, err
 	}
@@ -199,10 +216,13 @@ func (d *Database) LoadHabits() ([]*Habit, error) {
 	var habits []*Habit
 	for rows.Next() {
 		h := &Habit{
-			History: make(map[string]bool),
+			History:    make(map[string]bool),
+			TimeBlocks: make(map[string]map[int]bool),
 		}
 		var createdAtStr string
-		err := rows.Scan(&h.ID, &h.Name, &h.Description, &createdAtStr)
+		var gitDir sql.NullString
+		var isPriorityVal int
+		err := rows.Scan(&h.ID, &h.Name, &h.Description, &createdAtStr, &gitDir, &isPriorityVal)
 		if err != nil {
 			return nil, err
 		}
@@ -211,6 +231,11 @@ func (d *Database) LoadHabits() ([]*Habit, error) {
 		if h.CreatedAt.IsZero() {
 			h.CreatedAt = time.Now()
 		}
+
+		if gitDir.Valid {
+			h.GitDir = gitDir.String
+		}
+		h.IsPriority = (isPriorityVal == 1)
 
 		habits = append(habits, h)
 	}
@@ -230,20 +255,44 @@ func (d *Database) LoadHabits() ([]*Habit, error) {
 			}
 		}
 		historyRows.Close()
+
+		// Load time blocks
+		tbRows, err := d.db.Query("SELECT date, hour FROM time_blocks WHERE habit_id = ?", h.ID)
+		if err == nil {
+			for tbRows.Next() {
+				var dateStr string
+				var hr int
+				if err := tbRows.Scan(&dateStr, &hr); err == nil {
+					if h.TimeBlocks[dateStr] == nil {
+						h.TimeBlocks[dateStr] = make(map[int]bool)
+					}
+					h.TimeBlocks[dateStr][hr] = true
+				}
+			}
+			tbRows.Close()
+		}
 	}
 
 	return habits, nil
 }
 
 func (d *Database) AddHabit(h *Habit) error {
-	_, err := d.db.Exec("INSERT INTO habits (id, name, description, created_at) VALUES (?, ?, ?, ?)",
-		h.ID, h.Name, h.Description, h.CreatedAt.Format(time.RFC3339))
+	priorityVal := 0
+	if h.IsPriority {
+		priorityVal = 1
+	}
+	_, err := d.db.Exec("INSERT INTO habits (id, name, description, created_at, git_dir, is_priority) VALUES (?, ?, ?, ?, ?, ?)",
+		h.ID, h.Name, h.Description, h.CreatedAt.Format(time.RFC3339), h.GitDir, priorityVal)
 	return err
 }
 
 func (d *Database) UpdateHabit(h *Habit) error {
-	_, err := d.db.Exec("UPDATE habits SET name = ?, description = ? WHERE id = ?",
-		h.Name, h.Description, h.ID)
+	priorityVal := 0
+	if h.IsPriority {
+		priorityVal = 1
+	}
+	_, err := d.db.Exec("UPDATE habits SET name = ?, description = ?, git_dir = ?, is_priority = ? WHERE id = ?",
+		h.Name, h.Description, h.GitDir, priorityVal, h.ID)
 	return err
 }
 
@@ -260,6 +309,18 @@ func (d *Database) SaveToggle(habitID string, dateStr string, completed bool) er
 	} else {
 		_, err := d.db.Exec("DELETE FROM history WHERE habit_id = ? AND date = ?",
 			habitID, dateStr)
+		return err
+	}
+}
+
+func (d *Database) SaveTimeBlock(habitID string, dateStr string, hour int, active bool) error {
+	if active {
+		_, err := d.db.Exec("INSERT OR REPLACE INTO time_blocks (habit_id, date, hour) VALUES (?, ?, ?)",
+			habitID, dateStr, hour)
+		return err
+	} else {
+		_, err := d.db.Exec("DELETE FROM time_blocks WHERE habit_id = ? AND date = ? AND hour = ?",
+			habitID, dateStr, hour)
 		return err
 	}
 }

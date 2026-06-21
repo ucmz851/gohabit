@@ -13,15 +13,17 @@ type Config struct {
 	AccentColor   string
 	SuccessColor  string
 	WeekStart     int // 0 = Sunday, 1 = Monday
+	EveningHour   int
 }
 
 func DefaultConfig() Config {
 	return Config{
 		DBPath:        "habits.db",
-		HeaderBgColor: "#005F87",
-		AccentColor:   "#00AFDF",
-		SuccessColor:  "#00AF5F",
-		WeekStart:     1, // Monday start
+		HeaderBgColor: "#7C3AED",
+		AccentColor:   "#F59E0B",
+		SuccessColor:  "#10B981",
+		WeekStart:     1,  // Monday start
+		EveningHour:   18, // 6 PM
 	}
 }
 
@@ -80,6 +82,12 @@ func LoadConfig(path string) (Config, error) {
 					cfg.WeekStart = parsed
 				}
 			}
+		case "evening_hour":
+			if parsed, err := strconv.Atoi(val); err == nil {
+				if parsed >= 0 && parsed <= 23 {
+					cfg.EveningHour = parsed
+				}
+			}
 		}
 	}
 
@@ -94,16 +102,19 @@ func WriteDefaultConfig(path string) error {
 db_path = habits.db
 
 # Header background color (Hex code)
-color_header_bg = #005F87
+color_header_bg = #7C3AED
 
 # Accent color for borders and highlights (Hex code)
-color_accent = #00AFDF
+color_accent = #F59E0B
 
 # Success color for completed items (Hex code)
-color_success = #00AF5F
+color_success = #10B981
 
 # Start of the week for the calendar view (0 = Sunday, 1 = Monday)
 week_start = 1
+
+# Evening hour for native desktop notifications (0-23, default 18 is 6 PM)
+evening_hour = 18
 `
 	return os.WriteFile(path, []byte(content), 0644)
 }

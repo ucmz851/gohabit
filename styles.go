@@ -3,16 +3,17 @@ package main
 import "github.com/charmbracelet/lipgloss"
 
 var (
-	// Colors (Classic DOS/UNIX terminal theme)
-	navyColor       = lipgloss.Color("#005F87") // Navy Blue header
-	cyanColor       = lipgloss.Color("#00AFDF") // Cyan accent
-	greenColor      = lipgloss.Color("#00AF5F") // Success Green
-	redColor        = lipgloss.Color("#DF0000") // Red warning
-	whiteColor      = lipgloss.Color("#FFFFFF") // White text
-	grayColor       = lipgloss.Color("#8A8A8A") // Muted gray
-	lightGrayColor  = lipgloss.Color("#D7D7D7") // Light gray
-	darkGrayColor   = lipgloss.Color("#303030") // Dark gray borders
-	darkerGrayColor = lipgloss.Color("#121212") // Dark background
+	// Colors (Modern Vibrant Reward Theme)
+	navyColor       = lipgloss.Color("#7C3AED") // Purple/Indigo (reused variable name for compatibility)
+	cyanColor       = lipgloss.Color("#F59E0B") // Golden accent (reused variable name for compatibility)
+	greenColor      = lipgloss.Color("#10B981") // Success emerald/mint (reused variable name for compatibility)
+	redColor        = lipgloss.Color("#F43F5E") // Soft Rose warning (reused variable name for compatibility)
+	whiteColor      = lipgloss.Color("#F8FAFC") // Bright text
+	grayColor       = lipgloss.Color("#64748B") // Muted Slate Gray
+	lightGrayColor  = lipgloss.Color("#CBD5E1") // Light gray
+	darkGrayColor   = lipgloss.Color("#334155") // Dark slate borders
+	darkerGrayColor = lipgloss.Color("#0F172A") // Deep dark background
+	slateColor      = lipgloss.Color("#475569") // Slate helper color
 
 	// Base Styles
 	mainStyle = lipgloss.NewStyle().
@@ -24,15 +25,15 @@ var (
 			Padding(0, 2).
 			Bold(true)
 
-	// Panel Styles (Classic Double Line Borders)
+	// Panel Styles (Modern Rounded Borders)
 	leftPanelStyle = lipgloss.NewStyle().
-			Border(lipgloss.DoubleBorder()).
-			BorderForeground(cyanColor).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(navyColor).
 			Padding(1, 2)
 
 	rightPanelStyle = lipgloss.NewStyle().
-			Border(lipgloss.DoubleBorder()).
-			BorderForeground(cyanColor).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(navyColor).
 			Padding(1, 2)
 
 	// List item styles
@@ -60,12 +61,12 @@ var (
 
 	// Detail styles
 	detailTitleStyle = lipgloss.NewStyle().
-				Foreground(cyanColor).
+				Foreground(navyColor).
 				Bold(true).
 				Underline(true)
 
 	statCardStyle = lipgloss.NewStyle().
-			Border(lipgloss.NormalBorder()).
+			Border(lipgloss.RoundedBorder()).
 			BorderForeground(darkGrayColor).
 			Padding(0, 2).
 			MarginRight(1).
@@ -100,13 +101,13 @@ var (
 			MarginBottom(1)
 
 	inputStyle = lipgloss.NewStyle().
-			Border(lipgloss.NormalBorder()).
+			Border(lipgloss.RoundedBorder()).
 			BorderForeground(darkGrayColor).
 			Padding(0, 1)
 
 	focusedInputStyle = lipgloss.NewStyle().
-				Border(lipgloss.NormalBorder()).
-				BorderForeground(cyanColor).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(navyColor).
 				Padding(0, 1)
 
 	buttonStyle = lipgloss.NewStyle().
@@ -132,14 +133,14 @@ func InitStyles(cfg Config) {
 	greenColor = lipgloss.Color(cfg.SuccessColor)
 
 	headerStyle = headerStyle.Background(navyColor)
-	leftPanelStyle = leftPanelStyle.BorderForeground(cyanColor)
-	rightPanelStyle = rightPanelStyle.BorderForeground(cyanColor)
+	leftPanelStyle = leftPanelStyle.BorderForeground(navyColor)
+	rightPanelStyle = rightPanelStyle.BorderForeground(navyColor)
 	selectedHabitStyle = selectedHabitStyle.Foreground(cyanColor)
 	completedStyle = completedStyle.Foreground(greenColor)
 	streakStyle = streakStyle.Foreground(cyanColor)
-	detailTitleStyle = detailTitleStyle.Foreground(cyanColor)
+	detailTitleStyle = detailTitleStyle.Foreground(navyColor)
 	calendarDoneStyle = calendarDoneStyle.Foreground(greenColor)
 	formTitleStyle = formTitleStyle.Background(navyColor)
-	focusedInputStyle = focusedInputStyle.BorderForeground(cyanColor)
+	focusedInputStyle = focusedInputStyle.BorderForeground(navyColor)
 	focusedButtonStyle = focusedButtonStyle.Background(navyColor)
 }
