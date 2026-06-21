@@ -4,6 +4,12 @@ A beautiful, sleek, and gamified Terminal User Interface (TUI) for tracking dail
 
 Level up your life, earn XP, maintain streaks, and build consistent habits inside your favorite shell!
 
+## 📸 Screenshots
+
+| Welcome Screen | Main Dashboard | Hourly Time-Blocking |
+| :---: | :---: | :---: |
+| ![Welcome Screen](screenshot-2026-06-21_19-39-55.png) | ![Main Dashboard](screenshot-2026-06-21_19-41-27.png) | ![Time-Blocking](screenshot-2026-06-21_19-41-49.png) |
+
 ---
 
 ## ✨ Features
