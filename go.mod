@@ -1,4 +1,4 @@
-module habit-tracker
+module github.com/ucmz851/gohabit
 
 go 1.26.3
 
