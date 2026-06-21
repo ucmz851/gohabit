@@ -76,16 +76,21 @@ gohabit
 ```
 
 ### Option 2: Build & Install via Makefile
-Clone the repository and install the utility globally for your user using the provided `Makefile`:
+Clone the repository and run the installation script using `make`. This automatically:
+1. Compiles the `gohabit` binary locally.
+2. Creates the target directory `~/.local/bin` if it does not exist.
+3. Copies the binary to that folder.
+4. Detects your active shell (e.g. Bash or Zsh) and automatically configures your PATH profile (e.g. `~/.bashrc`, `~/.zshrc`) if `~/.local/bin` is not already in your system's `$PATH`.
+
 ```bash
 # Clone the repository
 git clone https://github.com/ucmz851/gohabit.git
 cd gohabit
 
-# Build & install (copies the gohabit binary to ~/.local/bin)
+# Build & install automatically
 make install
 ```
-After executing, you can launch `gohabit` from your terminal.
+After executing, restart your terminal or source your profile to start using `gohabit` globally.
 
 ### Option 3: Manual Compilation
 If you prefer to compile and run the binary locally:

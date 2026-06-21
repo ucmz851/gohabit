@@ -11,11 +11,9 @@ build:
 	@echo "Building $(BINARY_NAME)..."
 	go build -o $(BINARY_NAME)
 
-install: build
-	@echo "Installing $(BINARY_NAME) to $(INSTALL_DIR)..."
-	@mkdir -p $(INSTALL_DIR)
-	@cp $(BINARY_NAME) $(INSTALL_DIR)/$(BINARY_NAME)
-	@echo "Successfully installed! Make sure $(INSTALL_DIR) is in your PATH."
+install:
+	@chmod +x install.sh
+	@./install.sh
 
 uninstall:
 	@echo "Removing $(BINARY_NAME) from $(INSTALL_DIR)..."
