@@ -590,11 +590,11 @@ func (m model) renderMainView() string {
 		todayStr := time.Now().Format("2006-01-02")
 		completedToday := h.History[todayStr]
 
-		checkbox := "[ ]"
+		checkbox := "⬜"
 		if completedToday {
-			checkbox = completedStyle.Render("[✓]")
+			checkbox = completedStyle.Render("✅")
 		} else {
-			checkbox = pendingStyle.Render("[ ]")
+			checkbox = pendingStyle.Render("⬜")
 		}
 
 		title := h.Name
@@ -614,7 +614,13 @@ func (m model) renderMainView() string {
 		currentStreak, _ := h.GetStreaks()
 		streakStr := ""
 		if currentStreak > 0 {
-			streakStr = streakStyle.Render(fmt.Sprintf(" [Streak: %d]", currentStreak))
+			icon := "🔥"
+			if currentStreak >= 30 {
+				icon = "👑"
+			} else if currentStreak >= 7 {
+				icon = "🚀"
+			}
+			streakStr = streakStyle.Render(fmt.Sprintf(" [%s %d]", icon, currentStreak))
 		}
 
 		selector := "  "
@@ -644,10 +650,17 @@ func (m model) renderMainView() string {
 	totalDone := selectedHabit.GetTotalCompletions()
 	rate := selectedHabit.GetCompletionRate()
 
-	card1 := statCardStyle.Render(fmt.Sprintf("🔥 %s\n%s", statValStyle.Render(fmt.Sprintf("%d days", currStreak)), statLabelStyle.Render("Current Streak")))
-	card2 := statCardStyle.Render(fmt.Sprintf("🏆 %s\n%s", statValStyle.Render(fmt.Sprintf("%d days", longStreak)), statLabelStyle.Render("Longest Streak")))
-	card3 := statCardStyle.Render(fmt.Sprintf("✨ %s\n%s", statValStyle.Render(fmt.Sprintf("%d times", totalDone)), statLabelStyle.Render("Total Completed")))
-	card4 := statCardStyle.Render(fmt.Sprintf("📈 %s\n%s", statValStyle.Render(fmt.Sprintf("%.0f%%", rate)), statLabelStyle.Render("Success Rate")))
+	currStreakIcon := "🔥"
+	if currStreak >= 30 {
+		currStreakIcon = "👑"
+	} else if currStreak >= 7 {
+		currStreakIcon = "🚀"
+	}
+
+	card1 := statCardStyle.Render(fmt.Sprintf("%s %s\n%s", currStreakIcon, statValStyle.Render(fmt.Sprintf("%d days", currStreak)), statLabelStyle.Render("Current Streak")))
+	card2 := statCardStyle.Render(fmt.Sprintf("👑 %s\n%s", statValStyle.Render(fmt.Sprintf("%d days", longStreak)), statLabelStyle.Render("Longest Streak")))
+	card3 := statCardStyle.Render(fmt.Sprintf("🎯 %s\n%s", statValStyle.Render(fmt.Sprintf("%d times", totalDone)), statLabelStyle.Render("Total Completed")))
+	card4 := statCardStyle.Render(fmt.Sprintf("📊 %s\n%s", statValStyle.Render(fmt.Sprintf("%.0f%%", rate)), statLabelStyle.Render("Success Rate")))
 
 	statsGrid := lipgloss.JoinVertical(lipgloss.Left,
 		lipgloss.JoinHorizontal(lipgloss.Top, card1, card2),
@@ -1171,16 +1184,16 @@ func (m model) renderTimeline(h *Habit, width int) string {
 		if isFocused {
 			hStr = lipgloss.NewStyle().Foreground(cyanColor).Bold(true).Underline(true).Render(hourStr)
 			if active {
-				bStr = lipgloss.NewStyle().Foreground(greenColor).Background(darkGrayColor).Bold(true).Render("[■]")
+				bStr = lipgloss.NewStyle().Foreground(greenColor).Background(darkGrayColor).Bold(true).Render("✅ ")
 			} else {
-				bStr = lipgloss.NewStyle().Foreground(cyanColor).Background(darkGrayColor).Bold(true).Render("[□]")
+				bStr = lipgloss.NewStyle().Foreground(cyanColor).Background(darkGrayColor).Bold(true).Render("⬜ ")
 			}
 		} else {
 			hStr = lipgloss.NewStyle().Foreground(grayColor).Render(hourStr)
 			if active {
-				bStr = completedStyle.Render("[■]")
+				bStr = completedStyle.Render("✅ ")
 			} else {
-				bStr = pendingStyle.Render("[□]")
+				bStr = pendingStyle.Render("⬜ ")
 			}
 		}
 		headerCells = append(headerCells, hStr)
@@ -1333,14 +1346,20 @@ func handleCLI(db *Database, args []string) int {
 
 		todayStr := time.Now().Format("2006-01-02")
 		for _, h := range habits {
-			status := "[ ] Pending"
+			status := "⬜ Pending"
 			if h.History[todayStr] {
-				status = "[✓] Completed"
+				status = "✅ Completed"
 			}
 			currStreak, _ := h.GetStreaks()
-			streakStr := fmt.Sprintf("%d days", currStreak)
-			if currStreak == 0 {
-				streakStr = "0 days"
+			streakStr := "0 days"
+			if currStreak > 0 {
+				icon := "🔥"
+				if currStreak >= 30 {
+					icon = "👑"
+				} else if currStreak >= 7 {
+					icon = "🚀"
+				}
+				streakStr = fmt.Sprintf("%s %d days", icon, currStreak)
 			}
 			fmt.Printf("%-25s %-15s %-15s\n", h.Name, status, streakStr)
 		}

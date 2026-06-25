@@ -19,9 +19,9 @@ type Config struct {
 func DefaultConfig() Config {
 	return Config{
 		DBPath:        "habits.db",
-		HeaderBgColor: "#7C3AED",
-		AccentColor:   "#F59E0B",
-		SuccessColor:  "#10B981",
+		HeaderBgColor: "#FF79C6",
+		AccentColor:   "#BD93F9",
+		SuccessColor:  "#50FA7B",
 		WeekStart:     1,  // Monday start
 		EveningHour:   18, // 6 PM
 	}
@@ -102,13 +102,13 @@ func WriteDefaultConfig(path string) error {
 db_path = habits.db
 
 # Header background color (Hex code)
-color_header_bg = #7C3AED
+color_header_bg = #FF79C6
 
 # Accent color for borders and highlights (Hex code)
-color_accent = #F59E0B
+color_accent = #BD93F9
 
 # Success color for completed items (Hex code)
-color_success = #10B981
+color_success = #50FA7B
 
 # Start of the week for the calendar view (0 = Sunday, 1 = Monday)
 week_start = 1
